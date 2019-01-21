@@ -1,0 +1,435 @@
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <title>Websocket client</title>
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.7/js/tether.min.js" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <script src="/static/jquery.min.js"></script>
+    <script type="text/javascript">
+      
+      var websocket;
+      $(document).ready(init);
+      
+      function init() {
+          $('#server').val("ws://" + window.location.host + "/websocket");
+          if(!("WebSocket" in window)){  
+              $('#status').append('<p><span style="color: red;">websockets are not supported </span></p>');
+              $("#navigation").hide();  
+          } else {
+              $('#status').append('<p><span style="color: green;">websockets are supported </span></p>');
+              connect();
+          };
+              $("#connected").hide(); 	
+              $("#content").hide(); 	
+      };
+
+      function connect()
+      {
+          wsHost = $("#server").val()
+          wsHost = "ws://localhost:8080/websocket";
+          websocket = new WebSocket(wsHost);
+          showScreen('<b>Connecting to: ' +  wsHost + '</b>'); 
+          websocket.onopen = function(evt) { onOpen(evt) }; 
+          websocket.onclose = function(evt) { onClose(evt) }; 
+          websocket.onmessage = function(evt) { onMessage(evt) }; 
+          websocket.onerror = function(evt) { onError(evt) }; 
+      };  
+      
+      function disconnect() {
+          websocket.close();
+      }; 
+
+      function toggle_connection(){
+          if(websocket.readyState == websocket.OPEN){
+              disconnect();
+          } else {
+              connect();
+          };
+      };
+
+      function sendTxt() {
+          if(websocket.readyState == websocket.OPEN){
+              txt = $("#send_txt").val();
+              websocket.send(txt);
+              showScreen('sending: ' + txt); 
+          } else {
+               showScreen('websocket is not connected'); 
+          };
+      };
+
+      function sendQuery(txt) {
+          if(websocket.readyState == websocket.OPEN){
+              websocket.send(txt);
+              showScreen('Query sending to server: ' + txt); 
+              $('#ekran').val()
+          } else {
+               showScreen('websocket is not connected'); 
+          };
+      };
+
+      function onOpen(evt) { 
+          showScreen('<span style="color: green;">CONNECTED </span>'); 
+          $("#connected").fadeIn('slow');
+          $("#content").fadeIn('slow');
+      };  
+
+      function onClose(evt) { 
+          showScreen('<span style="color: red;">DISCONNECTED </span>');
+      };  
+
+      function onMessage(evt) { 
+          showScreen('<span style="color: blue;">RESPONSE: ' + evt.data+ '</span>'); 
+          var res = evt.data.split("= ");
+          console.log(res.length);
+          $('#ekran').val(res[1]);
+          screen = [];
+          a = res[1];
+          b = 'empty';
+      };  
+
+      function onError(evt) {
+          showScreen('<span style="color: red;">ERROR: ' + evt.data+ '</span>');
+      };
+
+      function showScreen(txt) { 
+          $('#output').prepend('<p>' + txt + '</p>');
+      };
+
+      function clearScreen() 
+      { 
+          $('#output').html("");
+      };
+
+      var screen = [];
+      var a = 'empty'; var b = 'empty';
+
+      function clickOn($arg){
+            
+            screen.push($arg);
+
+            console.log($arg);
+
+            var text = "";
+            var flen = screen.length;
+
+            for (i = 0; i < flen; i++) {
+
+            text+=screen[i];
+            }
+
+            $('#ekran').val(text);  
+
+        }
+    
+    function sqt(){
+        if (a == "empty" || a == ""){
+            a = $("#ekran").val();    
+        }
+
+        b = 1;
+
+
+        var query = 'op=sqt';
+        query += "&a="+a+"&b="+b;
+        console.log(query); 
+
+        sendQuery(query);
+    }
+
+    function pow(){
+        if (a == "empty" || a == ""){
+            a = $("#ekran").val();    
+        }
+        b = 1;
+
+        var query = 'op=pow';
+        query += "&a="+a+"&b="+b;
+        console.log(query); 
+
+        sendQuery(query);
+    }
+
+    function plus(){
+        if (a == "empty" || a == ""){
+            a = $('#ekran').val();
+            console.log(a);
+            $('#ekran').val("");
+            screen = []; 
+        } else {
+            b = $('#ekran').val();
+            console.log(b);
+
+            var query = 'op=plus';
+            query += "&a="+a+"&b="+b;
+            console.log(query);
+            sendQuery(query);
+        }
+    }
+
+    function minus(){
+        if (a == "empty" || a == ""){
+            a = $('#ekran').val();
+            console.log(a);
+            $('#ekran').val("");
+            screen = []; 
+        } else {
+            b = $('#ekran').val();
+            console.log(b);
+
+            var query = 'op=minus';
+            query += "&a="+a+"&b="+b;
+            console.log(query);
+            sendQuery(query);
+        }
+    }
+
+    function mult(){
+        if (a == "empty" || a == ""){
+            a = $('#ekran').val();
+            console.log(a);
+            $('#ekran').val("");
+            screen = []; 
+        } else {
+            b = $('#ekran').val();
+            console.log(b);
+
+            var query = 'op=mult';
+            query += "&a="+a+"&b="+b;
+            console.log(query);
+            sendQuery(query);
+        }
+    }
+
+    function divis(){
+        if (a == "empty" || a == ""){
+            a = $('#ekran').val();
+            console.log(a);
+            $('#ekran').val("");
+            screen = []; 
+        } else {
+            b = $('#ekran').val();
+            console.log(b);
+
+            var query = 'op=divis';
+            query += "&a="+a+"&b="+b;
+            console.log(query);
+            sendQuery(query);
+        }
+    }
+
+    function clearCalc(){
+        $('#ekran').val('');
+        screen = [];
+        a = 'empty';
+        b = 'empty';
+    }
+
+    function clearCalcScreen(){
+        $('#ekran').val('');
+    }
+
+    </script>
+
+
+
+</head>
+
+<body>
+
+        
+            
+
+    <div class="container">
+        <div class="row">
+          <div class="col-sm-6">
+                        <div id="header">
+                        <h1>Websocket Simple Calculator</h1>
+                        <p>Erlang server engine</p>
+                        <div id="status"></div>
+                        </div>
+
+                        <p id="connecting">
+                        <input type='text' id="server" value="" hidden></input>
+                        <button class="btn" type="button" onclick="toggle_connection()">Connect/dissconnect</button>
+                        </p>
+                        <div id="connected">				
+                        <p hidden>
+                        <input class="form-control" type='text' id="send_txt" style="width:70%;"></input>
+                        <button type="button" class="btn" onclick="sendTxt();">send</button>
+                        </p>
+                        </div>
+    
+                        <div id="content" hidden>						
+                        <button id="clear" onclick="clearScreen()" >Clear text</button>
+                           
+                        </div>
+                                        <div class="card card-info">
+                                            <div class="card-header">
+                                                <label>Simple Calculator</label>
+                                            </div>
+                                            <div class="card-block pb-calc-panel-body">
+                                                <input id="ekran" type="number" step="1" class="form-control" placeholder="2 + 2 = 4">
+                            
+                                                <hr class="pb-calc-hr">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="row" style="padding-bottom: 5px;">
+                                                            <div class="col-xs-3 col-sm-3 col-md-3">
+                                                                <button class="btn pb-calc-btn"><span class="fa fa-percent"></span></button>
+                                                            </div>
+                                                            <div class="col-xs-3 col-sm-3 col-md-3">
+                                                                <button onclick="sqt()" class="btn pb-calc-btn"><span class="fa fa-check"></span></button>
+                                                            </div>
+                                                            <div class="col-xs-3 col-sm-3 col-md-3">
+                                                                <button class="btn pb-calc-btn" onclick="pow()"><span class="fa fa-superscript"></span></button>
+                                                            </div>
+                                                            <div class="col-xs-3 col-sm-3 col-md-3">
+                                                                <button class="btn pb-calc-btn"><span class="fa fa-arrows"></span></button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row" style="background: #b3ffff;">
+                                                    <div class="col-md-12">
+                                                        <div class="row" style="padding-bottom: 5px;">
+                                                            <div class="col-xs-3 col-sm-3 col-md-3">
+                                                                <button class="btn pb-calc-btn" onclick="clearCalc()">CE</button>
+                                                            </div>
+                                                            <div class="col-xs-3 col-sm-3 col-md-3">
+                                                                <button class="btn pb-calc-btn" onclick="clearScreen()">C</button>
+                                                            </div>
+                                                            <div class="col-xs-3 col-sm-3 col-md-3">
+                                                                <button class="btn pb-calc-btn"  onclick="clearCalcScreen()"><span class="fa fa-arrow-circle-o-left"></span></button>
+                                                            </div>
+                                                            <div class="col-xs-3 col-sm-3 col-md-3">
+                                                                <button class="btn pb-calc-btn" onclick="divis()"><strong>/</strong></button>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row" style="padding-bottom: 5px;">
+                                                            <div class="col-xs-3 col-sm-3 col-md-3">
+                                                                <a href="javascript:void(0)" role="button" class="btn pb-calc-btn" onclick="clickOn('7')">7</a>
+                                                            </div>
+                                                            <div class="col-xs-3 col-sm-3 col-md-3">
+                                                                <a href="javascript:void(0)" role="button" class="btn pb-calc-btn" onclick="clickOn('8')">8</a>
+                                                            </div>
+                                                            <div class="col-xs-3 col-sm-3 col-md-3">
+                                                                <a href="javascript:void(0)" role="button" class="btn pb-calc-btn" onclick="clickOn('9')">9</a>
+                                                            </div>
+                                                            <div class="col-xs-3 col-sm-3 col-md-3">
+                                                                <button class="btn pb-calc-btn" onclick="mult()"><span class="fa fa-times fa-lg"></span></button>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row" style="padding-bottom: 5px;">
+                                                            <div class="col-xs-3 col-sm-3 col-md-3">
+                                                                <a href="javascript:void(0)" role="button" class="btn pb-calc-btn" onclick="clickOn('4')">4</a>
+                                                            </div>
+                                                            <div class="col-xs-3 col-sm-3 col-md-3">
+                                                                <a href="javascript:void(0)" role="button" class="btn pb-calc-btn" onclick="clickOn('5')">5</a>
+                                                            </div>
+                                                            <div class="col-xs-3 col-sm-3 col-md-3">
+                                                                <a href="javascript:void(0)" role="button" class="btn pb-calc-btn" onclick="clickOn('6')">6</a>
+                                                            </div>
+                                                            <div class="col-xs-3 col-sm-3 col-md-3">
+                                                                <button class="btn pb-calc-btn" onclick="minus()"><span class="fa fa-minus"></span></button>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row" style="padding-bottom: 5px;">
+                                                            <div class="col-xs-3 col-sm-3 col-md-3">
+                                                                    <a href="javascript:void(0)" role="button" class="btn pb-calc-btn" onclick="clickOn('1')">1</a>
+                                                            </div>
+                                                            <div class="col-xs-3 col-sm-3 col-md-3">
+                                                                    <a href="javascript:void(0)" role="button" class="btn pb-calc-btn" onclick="clickOn('2')">2</a>
+                                                            </div>
+                                                            <div class="col-xs-3 col-sm-3 col-md-3">
+                                                                    <a href="javascript:void(0)" role="button" class="btn pb-calc-btn" onclick="clickOn('3')">3</a>
+                                                            </div>
+                                                            <div class="col-xs-3 col-sm-3 col-md-3">
+                                                                <button class="btn pb-calc-btn" onclick="plus()"><span class="fa fa-plus"></span></button>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row" style="padding-bottom: 5px;">
+                                                            <div class="col-xs-3 col-sm-3 col-md-3">
+                                                                <button class="btn pb-calc-btn" hidden><span class="fa fa-calculator"></span></button>
+                                                            </div>
+                                                            <div class="col-xs-3 col-sm-3 col-md-3">
+                                                                <a href="javascript:void(0)" role="button" class="btn pb-calc-btn" onclick="clickOn('0')">0</a>
+                                                            </div>
+                                                            <div class="col-xs-3 col-sm-3 col-md-3">
+                                                                <button class="btn pb-calc-btn" hidden>,</button>
+                                                            </div>
+                                                            <div class="col-xs-3 col-sm-3 col-md-3">
+                                                                <button class="btn pb-calc-btn"><strong>=</strong></button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                
+                                
+                            
+                            
+                            <style>
+                                .pb-calc-container {
+                                    font-family: Lato;
+                                }
+                            
+                                .pb-calc-btn {
+                                    border: none;
+                                    background: none;
+                                    font-size: 20px;
+                                }
+                            
+                                    .pb-calc-btn:hover {
+                                        background: blue;
+                                        color: white;
+                                    }
+                            
+                                .pb-calc-panel-body {
+                                    padding-bottom: 0;
+                                    text-align: center;
+                                }
+
+                            </style>
+
+                        
+
+        </div>
+
+
+          <div class="col-sm-6">
+                <div class="card">
+                        <div class="card-header">
+                          Information
+                        </div>
+                        <div class="card-body" style="padding:15px;">
+                          <p>CE - clear calculator memory</p>
+                          <p>C - clear logs and informations</p>
+                          <p><span class="fa fa-arrow-circle-o-left"> - clear calc screen</span></p>
+    
+                        </div>
+                </div>
+
+                <div class="card">
+                        <div class="card-header">
+                          Output
+                        </div>
+                        <div class="card-body" style="padding:15px;">
+                          <span id="output"></span>
+
+                        </div>
+                </div>
+                
+          </div>
+
+        </div>
+      </div>
+
+      
+
+  </body>
+</html> 

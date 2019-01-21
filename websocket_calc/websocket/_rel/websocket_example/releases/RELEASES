@@ -1,0 +1,13 @@
+%% coding: utf-8
+[{release,"websocket_example","1","10.1",
+          [{kernel,"6.1","./lib/kernel-6.1"},
+           {stdlib,"3.6","./lib/stdlib-3.6"},
+           {crypto,"4.3.3","./lib/crypto-4.3.3"},
+           {cowlib,"2.7.0","./lib/cowlib-2.7.0"},
+           {asn1,"5.0.7","./lib/asn1-5.0.7"},
+           {public_key,"1.6.2","./lib/public_key-1.6.2"},
+           {ssl,"9.0.2","./lib/ssl-9.0.2"},
+           {ranch,"1.7.1","./lib/ranch-1.7.1"},
+           {cowboy,"2.6.1","./lib/cowboy-2.6.1"},
+           {websocket,"1","./lib/websocket-1"}],
+          permanent}].
